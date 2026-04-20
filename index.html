@@ -1,0 +1,2177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>lazy_c4t.exe — digital ghost</title>
+
+<!-- ════════════════════════════════════════════════════════════════════
+     EDIT ME FIRST — all your personal info lives in this one object.
+     Change values, save, refresh. That's it.
+     ════════════════════════════════════════════════════════════════════ -->
+<script>
+window.LAZY_C4T_CONFIG = {
+  // ───── SOCIALS ─────  (set href to "" to hide a pill)
+  socials: [
+    { label: "TWITCH",    href: "",  handle: "twitch.tv/lazy_c4t" },
+    { label: "X / TWTR",  href: "",  handle: "@lazy_c4t" },
+    { label: "YOUTUBE",   href: "",  handle: "@lazy_c4t" },
+    { label: "DISCORD",   href: "",  handle: "join.server" },
+  ],
+
+  // ───── WEEKLY SCHEDULE ───── (leave game blank or null for off days)
+  schedule: [
+    { day: "MON", time: "OFFLINE",       game: null,                   vibe: "napping" },
+    { day: "TUE", time: "8:00 PM EST",   game: "indie game pile",      vibe: "focus"   },
+    { day: "WED", time: "8:00 PM EST",   game: "VRChat hangout",       vibe: "social"  },
+    { day: "THU", time: "OFFLINE",       game: null,                   vibe: "recharge"},
+    { day: "FRI", time: "9:00 PM EST",   game: "just chatting + react",vibe: "chaos"   },
+    { day: "SAT", time: "3:00 PM EST",   game: "variety / viewer req", vibe: "cozy"    },
+    { day: "SUN", time: "OFFLINE",       game: null,                   vibe: "loaf"    },
+  ],
+
+  // ───── SPONSORS ───── (img is optional — leave as "" for text-only card)
+  sponsors: [
+    { name: "WAIFEE COFFEE", tagline: "caffeine with a kick", href: "https://waifee.com", img: "assets/sponsor-waifee.png" },
+    // set placeholder:true to render the “open slot / sponsor me” card
+    { name: "OPEN SLOT", tagline: "", href: "", img: "", placeholder: true },
+    { name: "OPEN SLOT", tagline: "", href: "", img: "", placeholder: true },
+    { name: "OPEN SLOT", tagline: "", href: "", img: "", placeholder: true },
+  ],
+
+  // ───── MERCH ITEMS ─────
+  // kind: "tee" | "hoodie" | "sticker" | "plush" | "cap" | "mug" — for placeholder art
+  // set placeholder:true to render a dashed "COMING SOON" card
+  merch: [
+    { name: "SLEEPY TEE",           price: "$28", href: "", img: "", kind: "tee"     },
+    { name: "DIGITAL GHOST HOODIE", price: "$55", href: "", img: "", kind: "hoodie"  },
+    { name: "c4t STICKER PACK",     price: "$8",  href: "", img: "", kind: "sticker" },
+    { name: "PLUSH (PREORDER)",     price: "$45", href: "", img: "", kind: "plush", placeholder: true },
+  ],
+
+  // ───── SUPPORT / TIPS ─────
+  support: [
+    { platform: "KO-FI",       href: "", note: "one-time tips" },
+    { platform: "THRONE",      href: "", note: "wishlist" },
+    { platform: "STREAMLABS",  href: "", note: "on-stream tips" },
+  ],
+
+  // ───── CONTACT ─────
+  business_email: "business@lazyc4t.dev",   // shown on the contact card
+  manager:        "— no manager —",
+};
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+  /* ══════ TOKENS ══════ */
+  :root{
+    --ink:        #0a0a14;
+    --ink-2:      #12121f;
+    --panel:      #1a0b24;
+    --pink:       #ff2e9a;
+    --cyan:       #00ffd1;
+    --yellow:     #ffff4e;
+    --mag:        #b744ff;
+    --fog:        #6e5e8a;
+    --dim:        #3a2a4a;
+    --white:      #f3eaff;
+
+    --f-term: "VT323", ui-monospace, monospace;
+    --f-mono: "JetBrains Mono", ui-monospace, monospace;
+    --f-chunk:"Press Start 2P", ui-monospace, monospace;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--ink);
+    color: var(--white);
+    font-family: var(--f-mono);
+    font-size: 17px;
+    line-height: 1.55;
+    overflow-x:hidden;
+    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><rect x='1' y='1' width='2' height='2' fill='white'/><rect x='3' y='3' width='2' height='2' fill='white'/><rect x='5' y='5' width='2' height='2' fill='white'/><rect x='7' y='7' width='2' height='2' fill='%2300ffd1'/><rect x='9' y='9' width='2' height='2' fill='%23ff2e9a'/></svg>") 1 1, auto;
+  }
+
+  a{ color: var(--cyan); text-decoration: none; }
+  a:hover{ color: var(--yellow); text-decoration: underline; text-decoration-style: dotted; }
+
+  /* ══════ PAGE BACKGROUND: scanlines + grid + noise ══════ */
+  body::before{
+    content:"";
+    position: fixed; inset:0; pointer-events:none; z-index: 100;
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        rgba(0,0,0,0) 0px,
+        rgba(0,0,0,0) 2px,
+        rgba(0,0,0,.18) 3px,
+        rgba(0,0,0,0) 4px
+      );
+    mix-blend-mode: multiply;
+  }
+  body::after{
+    content:"";
+    position: fixed; inset:0; pointer-events:none; z-index: 99;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(255,46,154,.12), transparent 50%),
+      radial-gradient(ellipse at 85% 80%, rgba(0,255,209,.10), transparent 55%),
+      linear-gradient(180deg, rgba(10,10,20,.0) 0%, rgba(10,10,20,.4) 100%);
+  }
+
+  .grid-bg{
+    position: fixed; inset:0; z-index:-1; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(183,68,255,.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(183,68,255,.08) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 85%);
+  }
+
+  /* ══════ TOP TICKER ══════ */
+  .ticker{
+    position: sticky; top:0; z-index: 50;
+    background: var(--yellow); color: var(--ink);
+    border-bottom: 3px solid var(--ink);
+    font-family: var(--f-term); font-size: 22px;
+    overflow:hidden; white-space:nowrap;
+  }
+  .ticker-track{
+    display:inline-block; padding: 6px 0;
+    animation: tickerScroll 45s linear infinite;
+  }
+  .ticker span{ padding: 0 28px; }
+  .ticker .blink{ color: var(--pink); animation: blink 1s steps(2) infinite; }
+  @keyframes tickerScroll{ from{transform:translateX(0)} to{transform:translateX(-50%)} }
+  @keyframes blink{ 50%{opacity:0} }
+
+  /* ══════ LAYOUT ══════ */
+  main{
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 24px 16px 120px;
+    position: relative;
+  }
+
+  section{ margin: 60px 0; }
+
+  /* ══════ WINDOWS (OS chrome) ══════ */
+  .win{
+    background: var(--ink-2);
+    border: 2px solid var(--cyan);
+    box-shadow:
+      4px 4px 0 var(--pink),
+      8px 8px 0 rgba(0,0,0,.6);
+    position: relative;
+  }
+  .win--pink{ border-color: var(--pink); box-shadow: 4px 4px 0 var(--cyan), 8px 8px 0 rgba(0,0,0,.6); }
+  .win--yellow{ border-color: var(--yellow); box-shadow: 4px 4px 0 var(--mag), 8px 8px 0 rgba(0,0,0,.6); }
+
+  .win-bar{
+    display:flex; align-items:center; gap:10px;
+    background: linear-gradient(90deg, var(--pink), var(--mag));
+    color: var(--ink);
+    padding: 6px 10px;
+    font-family: var(--f-chunk);
+    font-size: 10px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--cyan);
+  }
+  .win--pink .win-bar{ background: linear-gradient(90deg, var(--cyan), #00bfff); border-bottom-color: var(--pink);}
+  .win--yellow .win-bar{ background: linear-gradient(90deg, var(--yellow), #ffb84e); border-bottom-color: var(--mag);}
+  .win-bar .dots{ display:flex; gap:4px; }
+  .win-bar .dots i{ width:10px; height:10px; background: var(--ink); display:inline-block; }
+  .win-bar .spacer{ flex:1; }
+  .win-bar .btn-x{ width:18px; height:18px; background: var(--ink); color: var(--white); display:grid; place-items:center; font-family: var(--f-term); font-size:16px; }
+
+  .win-body{ padding: 24px; }
+
+  /* ══════ HEADINGS ══════ */
+  .h-chunk{
+    font-family: var(--f-chunk);
+    font-size: 14px;
+    letter-spacing: .08em;
+    color: var(--cyan);
+    text-shadow: 2px 2px 0 var(--pink);
+    margin: 0 0 18px;
+    text-transform: uppercase;
+  }
+  .h-term{
+    font-family: var(--f-term);
+    font-size: 36px;
+    color: var(--yellow);
+    margin: 0 0 8px;
+    line-height: 1;
+  }
+  .label{
+    font-family: var(--f-chunk);
+    font-size: 9px;
+    letter-spacing: .15em;
+    color: var(--fog);
+    text-transform: uppercase;
+  }
+
+  /* ══════ HERO ══════ */
+  .hero{
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap: 24px;
+    margin-top: 32px;
+  }
+  @media (max-width: 860px){ .hero{ grid-template-columns: 1fr; } }
+
+  .hero-title{
+    font-family: var(--f-chunk);
+    font-size: 44px;
+    line-height: 1.1;
+    margin: 0;
+    color: var(--white);
+    letter-spacing: -.02em;
+    position: relative;
+  }
+  .hero-title .c4t{
+    color: var(--pink);
+    text-shadow:
+      3px 0 0 var(--cyan),
+      -3px 0 0 var(--yellow);
+    animation: glitch 4s infinite steps(1);
+  }
+  @keyframes glitch{
+    0%, 92%, 100%{ transform: translate(0,0); }
+    93%{ transform: translate(-2px, 1px); }
+    94%{ transform: translate(2px, -1px); }
+    95%{ transform: translate(-1px, -1px); }
+    96%{ transform: translate(1px, 2px); }
+  }
+  @media (max-width:860px){ .hero-title{ font-size: 32px; } }
+
+  .hero-sub{
+    font-family: var(--f-term);
+    font-size: 26px;
+    color: var(--cyan);
+    margin: 18px 0 0;
+    line-height: 1.25;
+  }
+  .hero-sub .bracket{ color: var(--fog); }
+
+  .status-line{
+    margin-top: 20px;
+    display:flex; align-items:center; gap:12px;
+    font-family: var(--f-term); font-size: 20px;
+  }
+  .status-dot{
+    width:12px; height:12px; border-radius:50%;
+    background: var(--pink);
+    box-shadow: 0 0 8px var(--pink);
+    animation: blink 1.4s infinite;
+  }
+
+  .socials{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 24px;
+  }
+  .social-pill{
+    display: flex; justify-content: space-between; align-items:center;
+    padding: 10px 14px;
+    background: var(--ink-2);
+    border: 2px solid var(--cyan);
+    color: var(--cyan);
+    font-family: var(--f-mono); font-size: 12px;
+    transition: all .12s steps(2);
+    text-transform: uppercase;
+  }
+  .social-pill b{
+    font-family: var(--f-chunk);
+    font-size: 9px;
+    letter-spacing: .1em;
+  }
+  .social-pill:hover{
+    background: var(--pink); color: var(--ink); border-color: var(--yellow);
+    transform: translate(-2px,-2px);
+    box-shadow: 3px 3px 0 var(--cyan);
+    text-decoration: none;
+  }
+
+  /* ═════ CAT / PETTING METER ═════ */
+  .cat-frame{
+    position: relative;
+    aspect-ratio: 1/1.15;
+    background:
+      repeating-linear-gradient(45deg, #1a0b24 0 12px, #221032 12px 24px);
+    border: 2px solid var(--cyan);
+    box-shadow: 4px 4px 0 var(--pink);
+    overflow: hidden;
+    display:flex; align-items:center; justify-content:center;
+    user-select:none;
+  }
+  .cat-placeholder{
+    text-align:center;
+    font-family: var(--f-term); color: var(--fog);
+    font-size: 22px;
+    padding: 24px;
+    pointer-events:none;
+  }
+  .cat-placeholder .big{
+    font-family: var(--f-chunk);
+    font-size: 14px;
+    color: var(--cyan);
+    display:block;
+    margin-bottom: 14px;
+    letter-spacing: .08em;
+  }
+  .cat-placeholder .note{
+    display:block;
+    font-size: 18px;
+    color: var(--fog);
+    margin-top: 12px;
+    line-height: 1.3;
+  }
+  /* Your character art slot: replace the cat-placeholder div contents
+     with an img tag pointing at your model file, sized to fill the frame. */
+  .cat-frame img{ width:100%; height:100%; object-fit: cover; object-position: center; }
+
+  .cat-frame::after{
+    content:"REC ●";
+    position:absolute; top:10px; right:10px;
+    font-family: var(--f-term);
+    color: var(--pink); font-size: 18px;
+    animation: blink 1s infinite;
+  }
+  .cat-frame::before{
+    content:"CH 03 — 04:20 AM";
+    position:absolute; top:10px; left:10px;
+    font-family: var(--f-term);
+    color: var(--yellow); font-size: 16px;
+  }
+
+  .pet-meter{
+    margin-top: 14px;
+    border: 2px solid var(--pink);
+    background: var(--ink-2);
+    padding: 14px;
+  }
+  .pm-head{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--dim);
+  }
+  .pm-title{
+    display:flex; align-items:center; gap:8px;
+    font-family: var(--f-chunk); font-size: 10px; letter-spacing:.08em;
+    color: var(--yellow);
+  }
+  .pm-dot{
+    width:10px; height:10px; background: var(--pink); border-radius:50%;
+    box-shadow: 0 0 8px var(--pink);
+    animation: blink 1.4s infinite;
+  }
+  .pm-level{
+    font-family: var(--f-chunk); font-size: 10px; letter-spacing:.08em;
+    color: var(--cyan);
+    padding: 4px 8px;
+    border: 1px solid var(--cyan);
+    background: rgba(0,255,209,.08);
+  }
+  .pm-stats{
+    display: grid; grid-template-columns: 1fr; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .pm-stat{
+    display:grid;
+    grid-template-columns: 110px 1fr 70px;
+    align-items:center; gap: 10px;
+  }
+  .pm-stat-k{
+    font-family: var(--f-chunk); font-size: 8px; letter-spacing:.08em;
+    color: var(--fog);
+    display:flex; align-items:center; gap: 6px;
+  }
+  .pm-stat-k span{ font-size: 12px; }
+  .pm-bar{
+    height: 14px; background: var(--ink); border: 1px solid var(--dim);
+    position: relative; overflow:hidden;
+  }
+  .pm-bar-fill{
+    height:100%; width:0%;
+    transition: width .25s;
+  }
+  .pm-fill-pink  { background: repeating-linear-gradient(90deg, var(--pink) 0 5px, var(--mag) 5px 10px); }
+  .pm-fill-cyan  { background: repeating-linear-gradient(90deg, var(--cyan) 0 5px, #00bfb0 5px 10px); }
+  .pm-fill-yellow{ background: repeating-linear-gradient(90deg, var(--yellow) 0 5px, #ffb84e 5px 10px); }
+  .pm-stat-v{
+    font-family: var(--f-term); font-size: 16px; color: var(--cyan);
+    text-align: right;
+  }
+
+  .pm-actions{
+    display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;
+    margin-bottom: 12px;
+  }
+  .pm-act{
+    padding: 10px 6px;
+    background: var(--ink);
+    color: var(--white);
+    border: 2px solid var(--cyan);
+    font-family: var(--f-chunk); font-size: 9px; letter-spacing:.08em;
+    cursor:pointer;
+    transition: all .08s steps(2);
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+  }
+  .pm-act kbd{
+    font-family: var(--f-mono); font-size: 9px;
+    background: var(--ink-2); color: var(--fog);
+    border: 1px solid var(--dim);
+    padding: 1px 4px;
+    font-weight: normal;
+  }
+  .pm-act:hover{ transform: translate(-1px,-1px); }
+  .pm-act--pet:hover  { background: var(--pink);   color: var(--ink); border-color: var(--yellow); box-shadow: 2px 2px 0 var(--yellow); }
+  .pm-act--feed:hover { background: var(--cyan);   color: var(--ink); border-color: var(--pink);   box-shadow: 2px 2px 0 var(--pink);   }
+  .pm-act--boop:hover { background: var(--yellow); color: var(--ink); border-color: var(--pink);   box-shadow: 2px 2px 0 var(--pink);   }
+  .pm-act:active{ transform: translate(1px,1px); box-shadow: none; }
+
+  .pm-log{
+    background: var(--ink);
+    border: 1px solid var(--dim);
+    padding: 8px 10px;
+    font-family: var(--f-term); font-size: 15px;
+    color: var(--cyan);
+    height: 70px; overflow-y: auto;
+    line-height: 1.3;
+    margin-bottom: 10px;
+  }
+  .pm-log-line{ opacity: .5; }
+  .pm-log-line:last-child{ opacity: 1; color: var(--yellow); }
+  .pm-log-line.pink{ color: var(--pink); }
+  .pm-log::-webkit-scrollbar{ width: 6px; }
+  .pm-log::-webkit-scrollbar-track{ background: var(--ink-2); }
+  .pm-log::-webkit-scrollbar-thumb{ background: var(--dim); }
+
+  .pm-footer{
+    display:flex; justify-content:space-between; align-items:center;
+    font-family: var(--f-term); font-size: 16px;
+    color: var(--fog);
+  }
+  .pm-reset{
+    background: transparent; border: 1px solid var(--dim);
+    color: var(--fog); font-family: var(--f-mono); font-size: 12px;
+    padding: 2px 8px; cursor: pointer;
+  }
+  .pm-reset:hover{ color: var(--pink); border-color: var(--pink); }
+
+  /* ═══ HERO STACK (under socials) ═══ */
+  .hero-stack{
+    margin-top: 18px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+
+  /* QUICK FACTS */
+  .quick-facts{
+    background: var(--ink-2);
+    border: 2px solid var(--cyan);
+    box-shadow: 3px 3px 0 var(--mag);
+  }
+  .qf-bar{
+    display:flex; justify-content:space-between; align-items:center;
+    background: var(--cyan); color: var(--ink);
+    padding: 4px 10px;
+    font-family: var(--f-chunk); font-size: 9px; letter-spacing:.08em;
+  }
+  .qf-meta{ font-family: var(--f-mono); font-size: 9px; }
+  .qf-grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .qf-cell{
+    padding: 10px 12px;
+    border-right: 1px dashed var(--dim);
+    border-bottom: 1px dashed var(--dim);
+  }
+  .qf-cell:nth-child(2n){ border-right: none; }
+  .qf-cell:nth-child(n+3){ border-bottom: none; }
+  .qf-k{
+    font-family: var(--f-chunk); font-size: 8px; letter-spacing:.08em;
+    color: var(--fog); margin-bottom: 4px;
+  }
+  .qf-v{ font-family: var(--f-term); font-size: 22px; line-height: 1; }
+  .qf-v.pink{ color: var(--pink); }
+  .qf-v.cyan{ color: var(--cyan); }
+  .qf-v.yellow{ color: var(--yellow); }
+
+  /* BLINKIES */
+  .blinkies{
+    background: var(--ink-2);
+    border: 2px solid var(--mag);
+    box-shadow: 3px 3px 0 var(--cyan);
+  }
+  .bl-bar{
+    display:flex; justify-content:space-between; align-items:center;
+    background: var(--mag); color: var(--ink);
+    padding: 4px 10px;
+    font-family: var(--f-chunk); font-size: 9px; letter-spacing:.08em;
+  }
+  .bl-meta{ font-family: var(--f-mono); font-size: 9px; animation: blink 1.4s infinite; }
+  .bl-intro{
+    padding: 10px 12px;
+    border-bottom: 1px dashed var(--dim);
+    font-family: var(--f-term); font-size: 15px; color: var(--fog);
+    line-height: 1.3;
+  }
+  .bl-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 12px;
+  }
+  .blinkie{
+    display: inline-flex; align-items: center; gap: 6px;
+    width: 150px; height: 20px;
+    padding: 0 6px;
+    font-family: "Courier New", var(--f-mono);
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: .02em;
+    border: 1px solid;
+    image-rendering: pixelated;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    user-select: none;
+    text-transform: lowercase;
+    position: relative;
+    transition: transform .08s;
+    justify-self: center;
+  }
+  .blinkie{ cursor: default !important; }
+  .blinkie .dot{
+    width: 8px; height: 8px; flex-shrink: 0;
+    animation: blink 1s steps(2) infinite;
+  }
+  .blinkie.copied::after{
+    content: "COPIED!";
+    position: absolute; inset: 0;
+    background: var(--ink); color: var(--yellow);
+    display: grid; place-items: center;
+    font-family: var(--f-chunk); font-size: 9px;
+    letter-spacing: .08em;
+  }
+
+  /* blinkie color themes */
+  .blinkie.bl-hotpink { background: #ff2e9a; color: #fff; border-color: #fff; }
+  .blinkie.bl-hotpink  .dot{ background: #fff; }
+  .blinkie.bl-cyan    { background: #00ffd1; color: #0a0a14; border-color: #0a0a14; }
+  .blinkie.bl-cyan     .dot{ background: #0a0a14; }
+  .blinkie.bl-mag     { background: #b744ff; color: #ffff4e; border-color: #ffff4e; }
+  .blinkie.bl-mag      .dot{ background: #ffff4e; }
+  .blinkie.bl-yellow  { background: #ffff4e; color: #000; border-color: #000; }
+  .blinkie.bl-yellow   .dot{ background: #ff2e9a; }
+  .blinkie.bl-black   { background: #0a0a14; color: #00ffd1; border-color: #00ffd1; }
+  .blinkie.bl-black    .dot{ background: #ff2e9a; }
+  .blinkie.bl-lime    { background: #9dff2e; color: #0a0a14; border-color: #0a0a14; }
+  .blinkie.bl-lime     .dot{ background: #0a0a14; }
+  .blinkie.bl-orange  { background: #ff7a1e; color: #fff; border-color: #fff; }
+  .blinkie.bl-orange   .dot{ background: #fff; }
+  .blinkie.bl-white   { background: #f3eaff; color: #b744ff; border-color: #b744ff; }
+  .blinkie.bl-white    .dot{ background: #ff2e9a; }
+
+  .bl-credit{
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 8px 12px;
+    border-top: 1px dashed var(--dim);
+    font-family: var(--f-term); font-size: 15px;
+    color: var(--fog);
+  }
+  .bl-copyall{
+    background: var(--pink); color: var(--ink);
+    border: 1px solid var(--pink);
+    font-family: var(--f-chunk); font-size: 8px; letter-spacing:.08em;
+    padding: 4px 8px;
+    cursor: pointer;
+  }
+  .bl-copyall:hover{ background: var(--yellow); border-color: var(--yellow); }
+
+  /* toast */
+  .bl-toast{
+    position: fixed; bottom: 30px; right: 30px;
+    background: var(--pink); color: var(--ink);
+    font-family: var(--f-chunk); font-size: 10px;
+    padding: 10px 14px;
+    border: 2px solid var(--yellow);
+    box-shadow: 4px 4px 0 var(--cyan);
+    z-index: 300;
+    animation: toastIn .4s ease-out;
+  }
+  @keyframes toastIn{
+    from{ transform: translateY(30px); opacity: 0; }
+    to  { transform: translateY(0); opacity: 1; }
+  }
+
+  /* INFECTIONS */
+  .infections{
+    background: var(--ink-2);
+    border: 2px solid var(--yellow);
+    padding: 12px 14px;
+    box-shadow: 3px 3px 0 var(--pink);
+  }
+  .inf-header{
+    display:flex; justify-content:space-between; align-items:center;
+    font-family: var(--f-chunk); font-size: 10px; letter-spacing:.08em;
+    color: var(--yellow);
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed var(--dim);
+    text-transform: uppercase;
+  }
+  .inf-dot{
+    width: 8px; height: 8px; background: var(--pink);
+    border-radius: 50%;
+    animation: blink 1.2s infinite;
+  }
+  .inf-list{
+    list-style: none; margin:0; padding:0;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .inf-list li{
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    font-family: var(--f-mono); font-size: 11px;
+  }
+  .inf-tag{
+    font-family: var(--f-chunk); font-size: 8px; letter-spacing:.08em;
+    color: var(--ink); background: var(--cyan);
+    padding: 2px 4px;
+    text-align: center;
+  }
+  .inf-name{ color: var(--white); }
+  .inf-meta{ color: var(--fog); font-family: var(--f-term); font-size: 15px; }
+  .inf-meta.pink{ color: var(--pink); }
+
+  /* floating zzzz on pet */
+  .zzz{
+    position: fixed;
+    font-family: var(--f-chunk);
+    font-size: 14px;
+    color: var(--cyan);
+    pointer-events:none;
+    animation: floatUp 1.2s ease-out forwards;
+    z-index: 200;
+    text-shadow: 1px 1px 0 var(--ink);
+  }
+  @keyframes floatUp{
+    0%{ transform: translate(0,0) scale(.8); opacity:0; }
+    20%{ opacity:1; }
+    100%{ transform: translate(var(--dx,30px), -80px) scale(1.2) rotate(var(--rot,10deg)); opacity:0; }
+  }
+
+  /* ══════ SCHEDULE ══════ */
+  .sched{
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+  @media (max-width: 860px){ .sched{ grid-template-columns: repeat(2, 1fr); } }
+  .sched-day{
+    background: var(--ink);
+    border: 2px solid var(--dim);
+    padding: 12px 10px;
+    min-height: 140px;
+    position: relative;
+    display:flex; flex-direction:column;
+  }
+  .sched-day.live{
+    border-color: var(--pink);
+    box-shadow: inset 0 0 0 1px var(--pink), 0 0 12px rgba(255,46,154,.3);
+  }
+  .sched-day.off{
+    background: repeating-linear-gradient(45deg, var(--ink) 0 6px, var(--ink-2) 6px 12px);
+  }
+  .sched-day .day{
+    font-family: var(--f-chunk); font-size: 10px; letter-spacing: .08em;
+    color: var(--cyan); margin-bottom: 6px;
+  }
+  .sched-day.live .day{ color: var(--pink); }
+  .sched-day .time{
+    font-family: var(--f-term); font-size: 22px; color: var(--yellow);
+    line-height: 1; margin-bottom: 10px;
+  }
+  .sched-day.off .time{ color: var(--fog); }
+  .sched-day .game{
+    font-family: var(--f-mono); font-size: 11px; color: var(--white);
+    flex:1;
+  }
+  .sched-day .vibe{
+    font-family: var(--f-term); font-size: 14px;
+    color: var(--mag);
+    margin-top: 6px;
+  }
+  .sched-day .vibe::before{ content:"// "; color: var(--fog); }
+
+  .now-playing{
+    margin-top: 16px; padding: 10px 14px;
+    background: var(--pink); color: var(--ink);
+    font-family: var(--f-term); font-size: 22px;
+    display:flex; gap:12px; align-items:center;
+  }
+  .now-playing .marq{
+    overflow:hidden; flex:1; white-space: nowrap;
+  }
+  .now-playing .marq span{
+    display:inline-block;
+    animation: tickerScroll 18s linear infinite;
+    padding-right: 100px;
+  }
+
+  /* ══════ ABOUT / LORE ══════ */
+  .about-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width:860px){ .about-grid{ grid-template-columns: 1fr; } }
+  .lore{
+    font-family: var(--f-term);
+    font-size: 22px;
+    line-height: 1.35;
+    color: var(--white);
+  }
+  .lore .highlight{ color: var(--pink); }
+  .lore .cy{ color: var(--cyan); }
+  .lore p{ margin: 0 0 14px; }
+
+  .spec-sheet{
+    background: var(--ink);
+    border: 2px dashed var(--mag);
+    padding: 16px;
+    font-family: var(--f-mono); font-size: 12px;
+  }
+  .spec-sheet .row{
+    display:flex; justify-content:space-between;
+    padding: 6px 0;
+    border-bottom: 1px dotted var(--dim);
+  }
+  .spec-sheet .row:last-child{ border-bottom: none; }
+  .spec-sheet .k{ color: var(--fog); text-transform: uppercase; letter-spacing: .08em; font-size: 10px; }
+  .spec-sheet .v{ color: var(--cyan); }
+  .spec-sheet .v.pink{ color: var(--pink); }
+
+  /* ══════ SUPPORT / SPONSORS / MERCH GRIDS ══════ */
+  .grid-3{
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 14px;
+  }
+  .grid-4{
+    display: grid; grid-template-columns: repeat(4,1fr); gap: 14px;
+  }
+  @media (max-width: 860px){
+    .grid-3, .grid-4{ grid-template-columns: repeat(2,1fr); }
+  }
+  @media (max-width: 520px){
+    .grid-3, .grid-4{ grid-template-columns: 1fr; }
+  }
+
+  .card{
+    background: var(--ink);
+    border: 2px solid var(--cyan);
+    padding: 14px;
+    display:flex; flex-direction:column; gap: 10px;
+    transition: all .12s steps(2);
+  }
+  .card:hover{
+    transform: translate(-2px,-2px);
+    box-shadow: 4px 4px 0 var(--pink);
+    border-color: var(--yellow);
+  }
+  .card-img{
+    aspect-ratio: 1/1;
+    background:
+      repeating-linear-gradient(-45deg, #160a22 0 10px, #1f0f2e 10px 20px);
+    border: 1px dashed var(--dim);
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--f-term); color: var(--fog); font-size: 18px;
+    text-align:center;
+  }
+  .card-img img{ width:100%; height:100%; object-fit: cover; }
+  /* sponsor images often have white/transparent backgrounds — give them a light backdrop so they read as product art, not broken */
+  .card-img.has-img{ background: #fff; border-style: solid; border-color: var(--white); }
+  .card-img.has-img img{ object-fit: contain; padding: 10px; }
+  .card-title{ font-family: var(--f-chunk); font-size: 10px; color: var(--yellow); letter-spacing: .06em; }
+  .card-sub{ font-family: var(--f-mono); font-size: 11px; color: var(--white); }
+  .card-cta{
+    margin-top: auto;
+    display:flex; justify-content:space-between; align-items:center;
+    padding-top: 8px;
+    border-top: 1px dotted var(--dim);
+    font-family: var(--f-term); font-size: 18px;
+  }
+  .card-cta .price{ color: var(--pink); }
+  .card-cta .arrow{ color: var(--cyan); }
+
+  /* open sponsor slot */
+  .card--open{ border-color: var(--pink); border-style: dashed; }
+  .card--open:hover{ border-color: var(--yellow); box-shadow: 4px 4px 0 var(--cyan); }
+  .card-img--open{
+    background:
+      repeating-linear-gradient(45deg, rgba(255,46,154,.08) 0 10px, rgba(255,46,154,.16) 10px 20px);
+    border: 2px dashed var(--pink);
+    flex-direction: column;
+    gap: 8px;
+    color: var(--pink);
+  }
+  .open-plus{
+    font-family: var(--f-chunk); font-size: 32px; color: var(--pink);
+    text-shadow: 2px 2px 0 var(--cyan);
+    animation: blink 1.6s infinite;
+  }
+  .open-label{
+    font-family: var(--f-chunk); font-size: 9px; letter-spacing: .1em;
+    color: var(--yellow);
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  /* ══════ MERCH placeholder ART ══════ */
+  .merch-art{
+    width: 100%; height: 100%;
+    display: grid; place-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .merch-art::before{
+    content:""; position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(45deg,
+        rgba(255,46,154,.04) 0 8px,
+        rgba(0,255,209,.04) 8px 16px);
+    pointer-events:none;
+  }
+  .merch-art svg{ position: relative; width: 74%; height: 74%; image-rendering: pixelated; }
+  .merch-art .mtag{
+    position: absolute;
+    top: 8px; left: 8px;
+    font-family: var(--f-mono);
+    font-size: 9px;
+    letter-spacing: .1em;
+    color: var(--fog);
+    background: var(--ink);
+    border: 1px solid var(--dim);
+    padding: 2px 6px;
+    z-index: 2;
+  }
+  .merch-art .sku{
+    position: absolute;
+    bottom: 8px; right: 8px;
+    font-family: var(--f-mono);
+    font-size: 9px;
+    color: var(--cyan);
+    background: var(--ink);
+    border: 1px solid var(--dim);
+    padding: 2px 6px;
+    z-index: 2;
+  }
+
+  /* merch "coming soon" placeholder */
+  .card--soon{ border-color: var(--cyan); border-style: dashed; }
+  .card--soon:hover{ border-color: var(--yellow); box-shadow: 4px 4px 0 var(--pink); }
+  .card-img--soon{
+    background:
+      repeating-linear-gradient(-45deg,
+        rgba(0,255,209,.06) 0 10px,
+        rgba(0,255,209,.14) 10px 20px) !important;
+    display:flex !important;
+    flex-direction:column;
+    align-items:center; justify-content:center;
+    gap:4px;
+    color: var(--cyan);
+  }
+  .soon-plus{
+    font-family: var(--f-chunk); font-size: 28px; color: var(--cyan);
+    text-shadow: 2px 2px 0 var(--pink);
+    animation: blink 1.6s infinite;
+  }
+  .soon-label{
+    font-family: var(--f-chunk); font-size: 9px; letter-spacing: .1em;
+    color: var(--yellow);
+    text-align: center;
+    line-height: 1.4;
+  }
+  .soon-eta{
+    font-family: var(--f-mono); font-size: 9px;
+    color: var(--fog); letter-spacing: .1em;
+    margin-top: 2px;
+  }
+
+  /* ══════ COMMUNITY BANNER ══════ */
+  .community{
+    display:grid; grid-template-columns: 2fr 1fr; gap: 16px; align-items: stretch;
+  }
+  @media (max-width:860px){ .community{ grid-template-columns: 1fr; } }
+
+  .discord-card{
+    background: linear-gradient(135deg, #2a0f3d 0%, #0d1a2e 100%);
+    border: 2px solid var(--cyan);
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .discord-card::before{
+    content:""; position:absolute; inset:0;
+    background:
+      radial-gradient(circle at 80% 20%, rgba(0,255,209,.2), transparent 40%);
+    pointer-events:none;
+  }
+  .discord-card h3{
+    font-family: var(--f-chunk); font-size: 16px; margin:0 0 8px;
+    color: var(--cyan);
+  }
+  .discord-card p{
+    font-family: var(--f-term); font-size: 22px; color: var(--white); margin: 0 0 16px;
+  }
+  .big-btn{
+    display:inline-block;
+    padding: 12px 18px;
+    background: var(--cyan); color: var(--ink);
+    font-family: var(--f-chunk); font-size: 12px;
+    letter-spacing: .1em;
+    border: 2px solid var(--yellow);
+    box-shadow: 3px 3px 0 var(--pink);
+    transition: all .08s steps(2);
+  }
+  .big-btn:hover{
+    background: var(--yellow);
+    transform: translate(-2px,-2px);
+    box-shadow: 5px 5px 0 var(--pink);
+    text-decoration: none;
+    color: var(--ink);
+  }
+
+  .rules-card{
+    background: var(--ink);
+    border: 2px solid var(--yellow);
+    padding: 20px;
+    font-family: var(--f-term); font-size: 18px;
+    color: var(--white);
+  }
+  .rules-card h4{
+    font-family: var(--f-chunk); font-size: 10px; letter-spacing: .1em;
+    color: var(--yellow); margin: 0 0 12px;
+  }
+  .rules-card ol{ margin:0; padding-left: 22px; }
+  .rules-card li{ margin-bottom: 6px; }
+
+  /* ══════ CONTACT ══════ */
+  .contact-box{
+    background: var(--ink);
+    border: 2px solid var(--pink);
+    padding: 24px;
+    display:grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  }
+  @media (max-width:860px){ .contact-box{ grid-template-columns: 1fr; } }
+  .contact-box .field{
+    font-family: var(--f-mono); font-size: 12px;
+  }
+  .contact-box .field .k{
+    font-family: var(--f-chunk); font-size: 9px; letter-spacing:.1em;
+    color: var(--fog); text-transform:uppercase; margin-bottom: 6px; display:block;
+  }
+  .contact-box .field .v{
+    font-family: var(--f-term); font-size: 22px; color: var(--cyan);
+    word-break: break-all;
+  }
+  .copy-btn{
+    margin-top: 8px;
+    padding: 4px 10px;
+    background: transparent;
+    color: var(--pink);
+    border: 1px solid var(--pink);
+    font-family: var(--f-mono); font-size: 10px;
+    cursor: pointer;
+    letter-spacing: .08em;
+  }
+  .copy-btn:hover{ background: var(--pink); color: var(--ink); }
+
+  /* ══════ FOOTER ══════ */
+  footer{
+    border-top: 2px dashed var(--dim);
+    margin-top: 60px;
+    padding: 20px 24px 40px;
+    max-width: 1440px; margin-left:auto; margin-right:auto;
+    font-family: var(--f-term); font-size: 22px;
+    color: var(--fog);
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap: wrap; gap: 12px;
+  }
+  footer .heart{ color: var(--pink); animation: blink 1.6s infinite; }
+  footer .counter{
+    padding: 4px 10px;
+    border: 1px solid var(--dim);
+    background: var(--ink-2);
+    color: var(--cyan);
+  }
+
+  /* ══════ CURSOR TRAIL ══════ */
+  .trail{
+    position: fixed;
+    width: 6px; height: 6px;
+    background: var(--cyan);
+    pointer-events:none;
+    z-index: 150;
+    transition: opacity .6s;
+  }
+
+  /* ══════ IDLE DECAY SYSTEM ══════ */
+  /* Stage classes escalate — each additive. Reset removes all. */
+
+  /* Shared: wrapper shake + rgb split on title */
+  @keyframes idle-shake{
+    0%,100%{ transform: translate(0,0); }
+    20%{ transform: translate(-1px, 1px); }
+    40%{ transform: translate(1px, -1px); }
+    60%{ transform: translate(-1px, -1px); }
+    80%{ transform: translate(1px, 1px); }
+  }
+  @keyframes idle-shake-hard{
+    0%,100%{ transform: translate(0,0) skewX(0); }
+    10%{ transform: translate(-3px, 2px) skewX(-.5deg); }
+    25%{ transform: translate(3px, -2px) skewX(.5deg); }
+    40%{ transform: translate(-2px, 1px); }
+    55%{ transform: translate(2px, -2px); }
+    70%{ transform: translate(-4px, -1px); }
+    85%{ transform: translate(2px, 2px); }
+  }
+  @keyframes idle-hue-pulse{
+    0%,100%{ filter: hue-rotate(0deg); }
+    50%{ filter: hue-rotate(40deg); }
+  }
+  @keyframes idle-hue-strong{
+    0%{ filter: hue-rotate(0deg) saturate(1); }
+    50%{ filter: hue-rotate(-80deg) saturate(1.3); }
+    100%{ filter: hue-rotate(0deg) saturate(1); }
+  }
+  @keyframes idle-invert-flick{
+    0%,94%,100%{ filter: none; }
+    95%{ filter: invert(1) hue-rotate(180deg); }
+    97%{ filter: none; }
+    98%{ filter: invert(1); }
+  }
+
+  /* S1: subtle — scanline pulse + 1px rgb split on title */
+  body.idle-s1 .hero-title{
+    text-shadow:
+      2px 0 var(--cyan),
+      -2px 0 var(--pink),
+      0 0 0 currentColor !important;
+  }
+  body.idle-s1::before{
+    animation: scan-pulse-s1 2.2s ease-in-out infinite !important;
+  }
+  @keyframes scan-pulse-s1{
+    0%,100%{ opacity: 1; }
+    50%{ opacity: .6; }
+  }
+
+  /* S2: connection unstable — random tears + hue pulse */
+  body.idle-s2{ animation: idle-hue-pulse 6s ease-in-out infinite; }
+  body.idle-s2 .hero-title{
+    text-shadow:
+      3px 0 var(--cyan),
+      -3px 0 var(--pink),
+      0 0 8px rgba(255,46,154,.4) !important;
+  }
+
+  /* S3: signal degrading — shakes + visible VHS bands */
+  body.idle-s3 main{ animation: idle-shake 420ms steps(4) infinite; }
+  body.idle-s3 .hero-title{
+    text-shadow:
+      4px 0 var(--cyan),
+      -4px 0 var(--pink),
+      0 2px 0 var(--yellow) !important;
+  }
+  body.idle-s3::after{
+    /* override existing scanline after-layer with VHS bands */
+    background:
+      repeating-linear-gradient(
+        180deg,
+        transparent 0,
+        transparent 80px,
+        rgba(255,46,154,.08) 80px,
+        rgba(0,255,209,.08) 82px,
+        transparent 84px,
+        transparent 160px
+      ) !important;
+    animation: vhs-roll 4s linear infinite !important;
+  }
+  @keyframes vhs-roll{
+    from{ background-position: 0 0; }
+    to{ background-position: 0 320px; }
+  }
+
+  /* S4: corrupted — heavy rgb site-wide + static overlay */
+  body.idle-s4 main{
+    animation: idle-shake-hard 300ms steps(6) infinite, idle-hue-strong 3s ease-in-out infinite;
+    text-shadow: 1.5px 0 var(--cyan), -1.5px 0 var(--pink);
+  }
+  body.idle-s4 .hero-title{
+    text-shadow:
+      6px 0 var(--cyan),
+      -6px 0 var(--pink),
+      0 0 12px var(--mag) !important;
+    animation: title-rattle .18s steps(3) infinite;
+  }
+  @keyframes title-rattle{
+    0%,100%{ transform: translate(0,0); }
+    33%{ transform: translate(-2px, 1px); }
+    66%{ transform: translate(2px, -1px); }
+  }
+  .static-noise{
+    position: fixed; inset:0;
+    pointer-events: none;
+    z-index: 190;
+    opacity: .18;
+    mix-blend-mode: screen;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='.6'/></svg>");
+    animation: static-jitter .12s steps(3) infinite;
+    display: none;
+  }
+  body.idle-s4 .static-noise,
+  body.idle-s5 .static-noise{ display: block; }
+  body.idle-s5 .static-noise{ opacity: .35; animation-duration: .08s; }
+  @keyframes static-jitter{
+    0%   { transform: translate(0,0); }
+    33%  { transform: translate(-40px, 20px); }
+    66%  { transform: translate(30px, -30px); }
+    100% { transform: translate(0,0); }
+  }
+
+  /* S5: system failure — invert flickers + crawling NO SIGNAL bars */
+  body.idle-s5{
+    animation: idle-invert-flick 6s steps(40) infinite;
+  }
+  body.idle-s5 main{
+    animation: idle-shake-hard 180ms steps(6) infinite;
+  }
+  .no-signal-bar{
+    position: fixed;
+    left: -100%;
+    width: 40%;
+    height: 38px;
+    background: repeating-linear-gradient(90deg, #000 0 20px, var(--yellow) 20px 40px);
+    color: #000;
+    font-family: var(--f-chunk);
+    font-size: 14px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: .2em;
+    z-index: 195;
+    border-top: 2px solid var(--pink);
+    border-bottom: 2px solid var(--pink);
+    animation: ns-crawl 4s linear infinite;
+    pointer-events: none;
+  }
+  body.idle-s5 .no-signal-bar{ display: flex; }
+  .no-signal-bar:nth-of-type(1){ top: 22%; animation-duration: 3.5s; }
+  .no-signal-bar:nth-of-type(2){ top: 55%; animation-duration: 5s; animation-direction: reverse; }
+  .no-signal-bar:nth-of-type(3){ top: 78%; animation-duration: 4.2s; }
+  @keyframes ns-crawl{
+    from{ left: -45%; }
+    to  { left: 105%; }
+  }
+
+  /* BSOD-style overlay (S5) */
+  .idle-bsod{
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(520px, 86vw);
+    background: var(--pink);
+    border: 3px solid #000;
+    padding: 24px 28px;
+    color: #000;
+    font-family: var(--f-term);
+    font-size: 22px;
+    line-height: 1.35;
+    box-shadow: 8px 8px 0 #000, 0 0 40px rgba(255,46,154,.6);
+    z-index: 200;
+    display: none;
+  }
+  body.idle-s5 .idle-bsod{ display: block; animation: bsod-blink .8s steps(2) infinite; }
+  @keyframes bsod-blink{ 50%{ opacity: .88; } }
+  .idle-bsod h4{
+    margin: 0 0 8px;
+    font-family: var(--f-chunk);
+    font-size: 13px;
+    letter-spacing: .12em;
+  }
+  .idle-bsod code{
+    display: block;
+    margin-top: 10px;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    color: #2a0010;
+    background: rgba(0,0,0,.12);
+    padding: 6px 8px;
+    word-break: break-all;
+  }
+  .idle-bsod .wake{
+    margin-top: 12px;
+    font-family: var(--f-chunk);
+    font-size: 11px;
+    animation: blink 1s steps(2) infinite;
+  }
+
+  /* Idle HUD — small corner readout */
+  .idle-hud{
+    position: fixed;
+    top: 48px; right: 14px;
+    z-index: 196;
+    font-family: var(--f-term);
+    font-size: 18px;
+    padding: 4px 10px;
+    background: var(--ink-2);
+    border: 1px solid var(--dim);
+    color: var(--fog);
+    letter-spacing: .04em;
+    display: none;
+    pointer-events: none;
+  }
+  .idle-hud .dot{
+    display: inline-block; width: 8px; height: 8px;
+    background: currentColor; margin-right: 6px;
+    vertical-align: middle;
+    animation: blink .9s steps(2) infinite;
+  }
+  body.idle-s1 .idle-hud,
+  body.idle-s2 .idle-hud,
+  body.idle-s3 .idle-hud,
+  body.idle-s4 .idle-hud,
+  body.idle-s5 .idle-hud{ display: block; }
+  body.idle-s1 .idle-hud{ color: var(--fog);   border-color: var(--dim); }
+  body.idle-s2 .idle-hud{ color: var(--yellow);border-color: var(--yellow); }
+  body.idle-s3 .idle-hud{ color: #ffb84e;      border-color: #ffb84e; }
+  body.idle-s4 .idle-hud{ color: var(--pink);  border-color: var(--pink); animation: idle-shake 300ms steps(3) infinite; }
+  body.idle-s5 .idle-hud{ color: #fff; background: var(--pink); border-color: #000; animation: blink .3s steps(2) infinite; }
+
+  /* "CONNECTION RESTORED" flash */
+  .idle-restored{
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(.9);
+    background: var(--cyan);
+    color: #000;
+    font-family: var(--f-chunk);
+    font-size: 16px;
+    padding: 14px 22px;
+    border: 2px solid #000;
+    box-shadow: 6px 6px 0 var(--pink);
+    z-index: 210;
+    pointer-events: none;
+    opacity: 0;
+    letter-spacing: .08em;
+  }
+  .idle-restored.show{
+    animation: restored-flash .9s ease-out forwards;
+  }
+  @keyframes restored-flash{
+    0%  { opacity: 0; transform: translate(-50%, -50%) scale(.8); }
+    20% { opacity: 1; transform: translate(-50%, -50%) scale(1.04); }
+    60% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100%{ opacity: 0; transform: translate(-50%, -50%) scale(1); }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- ════ IDLE DECAY ELEMENTS ════ -->
+<div class="static-noise" aria-hidden="true"></div>
+<div class="no-signal-bar" aria-hidden="true">▸ NO SIGNAL ▸ NO SIGNAL ▸ NO SIGNAL ▸</div>
+<div class="no-signal-bar" aria-hidden="true">▸ TRACKING ERROR ▸ ▸ ▸</div>
+<div class="no-signal-bar" aria-hidden="true">▸ SIGNAL LOST ▸ c4t.exe ▸</div>
+<div class="idle-hud" id="idle-hud" aria-hidden="true">
+  <span class="dot"></span><span id="idle-hud-txt">IDLE 00:00</span>
+</div>
+<div class="idle-bsod" id="idle-bsod" aria-hidden="true">
+  <h4>▸ CRITICAL ERROR 0x0C4T</h4>
+  c4t.dll has stopped responding.<br>
+  the ghost has wandered off.<br><br>
+  press any key to wake her.
+  <code>fault: IDLE_DECAY_MAX · module: lazy_c4t.exe · uptime: ∞</code>
+  <div class="wake">● ● ● PRESS ANY KEY ● ● ●</div>
+</div>
+<div class="idle-restored" id="idle-restored" aria-hidden="true">▸ CONNECTION RESTORED ✓</div>
+
+<!-- ════ TOP TICKER ════ -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span>● STATUS: <span class="blink">CURRENTLY TRAPPED IN THE MACHINE</span></span>
+    <span>★ LAZY_C4T.EXE v2.0 ★</span>
+    <span>NEW STREAM ALERT ▶▶</span>
+    <span>DIGITAL GHOST ONLINE</span>
+    <span>TIP JAR ACCEPTING VIRTUAL SNACKS 🐟</span>
+    <span>● STATUS: <span class="blink">CURRENTLY TRAPPED IN THE MACHINE</span></span>
+    <span>★ LAZY_C4T.EXE v2.0 ★</span>
+    <span>NEW STREAM ALERT ▶▶</span>
+    <span>DIGITAL GHOST ONLINE</span>
+    <span>TIP JAR ACCEPTING VIRTUAL SNACKS 🐟</span>
+  </div>
+</div>
+
+<main>
+
+  <!-- ════ HERO ════ -->
+  <section class="hero">
+    <div>
+      <div class="label">▸ PROFILE // user_0001</div>
+      <h1 class="hero-title">
+        lazy_<span class="c4t">c4t</span>
+      </h1>
+      <p class="hero-sub">
+        <span class="bracket">[</span> digital ghost. permanently lagging.
+        <span class="bracket">]</span><br>
+        indie games · vrchat · react · hangout
+      </p>
+      <div class="status-line">
+        <span class="status-dot"></span>
+        <span>currently: <b style="color:var(--yellow)">buffering life.exe</b></span>
+      </div>
+
+      <div class="socials" id="socials-grid">
+        <!-- socials injected from LAZY_C4T_CONFIG -->
+      </div>
+
+      <!-- ═══ QUICK FACTS + INFECTIONS + BADGES (fills left column) ═══ -->
+      <div class="hero-stack">
+        <div class="quick-facts">
+          <div class="qf-bar">
+            <span>▸ quick_facts.ini</span>
+            <span class="qf-meta">READ-ONLY</span>
+          </div>
+          <div class="qf-grid">
+            <div class="qf-cell">
+              <div class="qf-k">TIME IN MACHINE</div>
+              <div class="qf-v pink" id="qf-uptime">—</div>
+            </div>
+            <div class="qf-cell">
+              <div class="qf-k">Caffeine TODAY</div>
+              <div class="qf-v cyan">3 Drinks</div>
+            </div>
+            <div class="qf-cell">
+              <div class="qf-k">HRS SLEPT</div>
+              <div class="qf-v yellow">Not Enough</div>
+            </div>
+            <div class="qf-cell">
+              <div class="qf-k">VIBE CHECK</div>
+              <div class="qf-v pink">passing</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="infections">
+          <div class="inf-header">
+            <span>▸ currently infected with</span>
+            <span class="inf-dot"></span>
+          </div>
+          <ul class="inf-list">
+            <li><span class="inf-tag">GAME</span> <span class="inf-name">Hearthstone</span> <span class="inf-meta">92 hrs</span></li>
+            <li><span class="inf-tag">SONG</span> <span class="inf-name">whatever's playing on loop</span> <span class="inf-meta">21 plays today</span></li>
+            <li><span class="inf-tag">SHOW</span> <span class="inf-name">some 2004 anime</span> <span class="inf-meta">s2 ep4</span></li>
+            <li><span class="inf-tag">SNACK</span> <span class="inf-name">goldfish (ironic)</span> <span class="inf-meta">whole bag</span></li>
+            <li><span class="inf-tag">TAB</span> <span class="inf-name">87 open tabs</span> <span class="inf-meta pink">unwell</span></li>
+          </ul>
+        </div>
+
+        <div class="blinkies">
+          <div class="bl-bar">
+            <span>▸ badges.html</span>
+            <span class="bl-meta">ACHIEVEMENTS</span>
+          </div>
+          <div class="bl-intro">
+            <span>things I've done / am / own. in blinkie form.</span>
+          </div>
+          <div class="bl-grid" id="bl-grid"><!-- injected --></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <!-- ════ CHARACTER FRAME — REPLACE PLACEHOLDER WITH <img> ════ -->
+      <div class="cat-frame" id="cat-frame" title="click the cat to pet">
+        <img src="assets/model.png" alt="lazy_c4t">
+      </div>
+
+      <!-- petting meter v2 -->
+      <div class="pet-meter">
+        <div class="pm-head">
+          <div class="pm-title">
+            <span class="pm-dot"></span>
+            <span>PETTING SYSTEM v2.0</span>
+          </div>
+          <div class="pm-level" id="pm-level">LV.1 KITTEN</div>
+        </div>
+
+        <div class="pm-stats">
+          <div class="pm-stat">
+            <div class="pm-stat-k"><span>♥</span> AFFECTION</div>
+            <div class="pm-bar"><div class="pm-bar-fill pm-fill-pink" id="aff-fill"></div></div>
+            <div class="pm-stat-v" id="aff-val">0 / 100</div>
+          </div>
+          <div class="pm-stat">
+            <div class="pm-stat-k"><span>🐟</span> HUNGER</div>
+            <div class="pm-bar"><div class="pm-bar-fill pm-fill-cyan" id="hun-fill"></div></div>
+            <div class="pm-stat-v" id="hun-val">full</div>
+          </div>
+          <div class="pm-stat">
+            <div class="pm-stat-k"><span>⚡</span> CHAOS</div>
+            <div class="pm-bar"><div class="pm-bar-fill pm-fill-yellow" id="cha-fill"></div></div>
+            <div class="pm-stat-v" id="cha-val">0%</div>
+          </div>
+        </div>
+
+        <div class="pm-actions">
+          <button class="pm-act pm-act--pet" id="pet-btn">◆ PET <kbd>P</kbd></button>
+          <button class="pm-act pm-act--feed" id="feed-btn">🐟 FEED <kbd>F</kbd></button>
+          <button class="pm-act pm-act--boop" id="boop-btn">👉 BOOP <kbd>B</kbd></button>
+        </div>
+
+        <div class="pm-log" id="pm-log">
+          <div class="pm-log-line">&gt; system ready. cat detected.</div>
+        </div>
+
+        <div class="pm-footer">
+          <span id="pm-streak">🔥 streak: day 1</span>
+          <span id="pm-unlocks">🎖 0 / 6 unlocked</span>
+          <button class="pm-reset" id="pm-reset" title="reset progress">⟲</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ SCHEDULE ════ -->
+  <section>
+    <div class="win">
+      <div class="win-bar">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <span>schedule.exe</span>
+        <span class="spacer"></span>
+        <span>— □ <span class="btn-x">x</span></span>
+      </div>
+      <div class="win-body">
+        <div class="label">▸ WEEKLY TRANSMISSION LOG</div>
+        <h2 class="h-term">when the ghost appears ▸</h2>
+        <div class="sched" id="sched-grid"><!-- injected --></div>
+
+        <div class="now-playing">
+          <span>Attention!</span>
+          <div class="marq"><span>NEXT STREAM ▸ check the grid above ▸ times are EST because I refuse to learn UTC ▸ schedule subject to vibes ▸ ADHD may extend or cancel any session ▸ </span></div>
+          <span>Attention!</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ ABOUT ════ -->
+  <section>
+    <div class="win win--pink">
+      <div class="win-bar">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <span>about_me.txt</span>
+        <span class="spacer"></span>
+        <span>3.2 KB</span>
+      </div>
+      <div class="win-body">
+        <div class="label">▸ FILE // lore.log</div>
+        <h2 class="h-term">who is in the machine ▸</h2>
+
+        <div class="about-grid">
+          <div class="lore">
+            <p>once upon a download, I was <span class="highlight">a regular person.</span> then I got <span class="cy">sucked into the digital world</span> and now I live here. permanently. immortal. slightly buffering.</p>
+            <p>I can't leave. you can't make me leave. the wifi IS the afterlife.</p>
+            <p>I mostly play <span class="highlight">indie games</span>, hang out in <span class="cy">VRChat</span>, watch weird videos with the chat, and talk about nothing for 4 hours at a time. you'll get attached. I'll forget to mention it's 3am. we're both going to lose sleep. <span class="highlight">it'll be fine.</span></p>
+          </div>
+
+          <div class="spec-sheet">
+            <div class="row"><span class="k">species</span><span class="v">Human (allegedly)</span></div>
+            <div class="row"><span class="k">form</span><span class="v pink">digital ghost</span></div>
+            <div class="row"><span class="k">age</span><span class="v">yes</span></div>
+            <div class="row"><span class="k">pronouns</span><span class="v">He/Him</span></div>
+            <div class="row"><span class="k">location</span><span class="v">inside the computer</span></div>
+            <div class="row"><span class="k">latency</span><span class="v pink">∞ ms</span></div>
+            <div class="row"><span class="k">favorite food</span><span class="v">goldfish</span></div>
+            <div class="row"><span class="k">nemesis</span><span class="v">captcha</span></div>
+            <div class="row"><span class="k">skills</span><span class="v">sleeping, reacting, being unwell about a video game</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ SUPPORT ════ -->
+  <section>
+    <div class="label">▸ tip jar // she needs it</div>
+    <h2 class="h-term">feed the ghost ▸</h2>
+    <div class="grid-4" id="support-grid"><!-- injected --></div>
+  </section>
+
+  <!-- ════ SPONSORS ════ -->
+  <section>
+    <div class="win win--yellow">
+      <div class="win-bar">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <span>sponsors.html</span>
+        <span class="spacer"></span>
+        <span>verified ✓</span>
+      </div>
+      <div class="win-body">
+        <div class="label">▸ partners // people who pay the bills</div>
+        <h2 class="h-term">sponsors ▸</h2>
+        <div class="grid-4" id="sponsors-grid"><!-- injected --></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ COMMUNITY ════ -->
+  <section>
+    <div class="label">▸ community // the ghost house</div>
+    <h2 class="h-term">join the server ▸</h2>
+    <div class="community">
+      <div class="discord-card">
+        <h3>the haunted server</h3>
+        <p>
+          where we post cat pics, yell about indie games at 2am, and form parasocial bonds that would concern a therapist. all welcome. no normies (jk everyone's a normie here).
+        </p>
+        <a class="big-btn" href="#" id="discord-link">▸ ENTER THE SERVER</a>
+      </div>
+      <div class="rules-card">
+        <h4>▸ HOUSE RULES</h4>
+        <ol>
+          <li>be nice or be gone</li>
+          <li>no being weird to each other</li>
+          <li>tag spoilers &gt;:(</li>
+          <li>post cat pics in #cat-tax</li>
+          <li>if you see me online, say hi</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ CONTACT ════ -->
+  <section>
+    <div class="label">▸ business only // no "hey bestie" emails pls</div>
+    <h2 class="h-term">get in touch ▸</h2>
+    <div class="contact-box">
+      <div class="field">
+        <span class="k">▸ business email</span>
+        <span class="v" id="biz-email">business@lazyc4t.dev</span>
+        <button class="copy-btn" data-copy="biz-email">COPY</button>
+      </div>
+      <div class="field">
+        <span class="k">▸ management</span>
+        <span class="v" id="manager-v">— no manager —</span>
+        <div style="margin-top:8px; font-family: var(--f-mono); font-size: 11px; color: var(--fog);">
+          send sponsorship decks to the email. 48h response or I ate it.
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div>made with <span class="heart">♥</span> inside the machine · © <span id="yr">2026</span> lazy_c4t</div>
+  <div class="counter">VISITORS: <span id="visit-count">00042069</span></div>
+</footer>
+
+<!-- ════════════════════════════════════════════════════════════════════
+     JS
+     ════════════════════════════════════════════════════════════════════ -->
+<script>
+  const C = window.LAZY_C4T_CONFIG;
+
+  /* ─── SOCIALS ─── */
+  const socialsHTML = C.socials.map(s => `
+    <a class="social-pill" href="${s.href || '#'}" ${s.href ? 'target="_blank" rel="noopener"' : ''}>
+      <b>▸ ${s.label}</b>
+      <span>${s.handle}</span>
+    </a>
+  `).join('');
+  document.getElementById('socials-grid').innerHTML = socialsHTML;
+
+  /* ─── SCHEDULE ─── */
+  const todayIdx = (new Date().getDay() + 6) % 7; // Mon=0
+  const schedHTML = C.schedule.map((d,i) => {
+    const off = !d.game;
+    const live = i === todayIdx && !off;
+    return `
+      <div class="sched-day ${off ? 'off' : ''} ${live ? 'live' : ''}">
+        <div class="day">${d.day}${live ? ' ● LIVE' : ''}</div>
+        <div class="time">${d.time}</div>
+        <div class="game">${d.game || '— asleep —'}</div>
+        <div class="vibe">${d.vibe}</div>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('sched-grid').innerHTML = schedHTML;
+
+  /* ─── SPONSORS ─── */
+  document.getElementById('sponsors-grid').innerHTML = C.sponsors.map(s => {
+    if (s.placeholder) {
+      return `
+      <a class="card card--open" href="mailto:${C.business_email}">
+        <div class="card-img card-img--open">
+          <div class="open-plus">+</div>
+          <div class="open-label">YOUR BRAND<br>HERE</div>
+        </div>
+        <div class="card-title" style="color:var(--pink)">▸ OPEN SLOT</div>
+        <div class="card-sub">sponsor me. I'm very online.</div>
+        <div class="card-cta"><span class="price">inquire ▸</span><span class="arrow">▸▸</span></div>
+      </a>`;
+    }
+    return `
+    <a class="card" href="${s.href || '#'}" ${s.href ? 'target="_blank" rel="noopener"' : ''}>
+      <div class="card-img${s.img ? ' has-img' : ''}">${s.img ? `<img src="${s.img}" alt="${s.name}">` : 'sponsor<br>logo'}</div>
+      <div class="card-title">${s.name}</div>
+      <div class="card-sub">${s.tagline}</div>
+      <div class="card-cta"><span class="price">partner</span><span class="arrow">▸▸</span></div>
+    </a>`;
+  }).join('');
+
+  /* ─── MERCH ─── (section removed; renderer kept commented for future) */
+  /* const MERCH_ART = {
+    tee: (c1, c2) => `
+      <svg viewBox="0 0 64 64" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+        <!-- t-shirt silhouette, pixel-art -->
+        <path d="M14 14 L22 10 L28 12 L36 12 L42 10 L50 14 L56 22 L50 28 L46 24 L46 54 L18 54 L18 24 L14 28 L8 22 Z"
+              fill="${c1}" stroke="#0a0a14" stroke-width="2"/>
+        <!-- collar -->
+        <path d="M26 12 Q32 18 38 12" fill="none" stroke="#0a0a14" stroke-width="2"/>
+        <!-- chest graphic: cat face -->
+        <g transform="translate(26,28)">
+          <rect x="0" y="4" width="12" height="10" fill="${c2}"/>
+          <polygon points="0,4 3,0 4,4" fill="${c2}"/>
+          <polygon points="12,4 9,0 8,4" fill="${c2}"/>
+          <rect x="3" y="7" width="2" height="2" fill="#0a0a14"/>
+          <rect x="7" y="7" width="2" height="2" fill="#0a0a14"/>
+          <rect x="5" y="11" width="2" height="1" fill="#0a0a14"/>
+        </g>
+      </svg>`,
+    hoodie: (c1, c2) => `
+      <svg viewBox="0 0 64 64" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+        <!-- hoodie body -->
+        <path d="M12 18 L20 12 L24 14 Q32 10 40 14 L44 12 L52 18 L58 28 L52 32 L48 28 L48 56 L16 56 L16 28 L12 32 L6 28 Z"
+              fill="${c1}" stroke="#0a0a14" stroke-width="2"/>
+        <!-- hood -->
+        <path d="M22 14 Q32 4 42 14 L40 20 Q32 16 24 20 Z" fill="${c1}" stroke="#0a0a14" stroke-width="2"/>
+        <!-- kangaroo pocket -->
+        <path d="M22 38 L24 34 L40 34 L42 38 L42 48 L22 48 Z" fill="none" stroke="#0a0a14" stroke-width="1.5"/>
+        <!-- drawstrings -->
+        <line x1="28" y1="18" x2="28" y2="30" stroke="#0a0a14" stroke-width="1.5"/>
+        <line x1="36" y1="18" x2="36" y2="30" stroke="#0a0a14" stroke-width="1.5"/>
+        <rect x="27" y="30" width="2" height="3" fill="${c2}"/>
+        <rect x="35" y="30" width="2" height="3" fill="${c2}"/>
+      </svg>`,
+    sticker: (c1, c2) => `
+      <svg viewBox="0 0 64 64" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+        <!-- sticker stack, slight rotation -->
+        <g transform="rotate(-8 32 40)">
+          <rect x="14" y="28" width="30" height="22" rx="2" fill="${c2}" stroke="#0a0a14" stroke-width="2"/>
+        </g>
+        <g transform="rotate(4 32 36)">
+          <rect x="18" y="22" width="30" height="22" rx="2" fill="${c1}" stroke="#0a0a14" stroke-width="2"/>
+          <!-- cat face on top sticker -->
+          <g transform="translate(24,26)">
+            <polygon points="0,4 3,0 4,4" fill="#0a0a14"/>
+            <polygon points="18,4 15,0 14,4" fill="#0a0a14"/>
+            <rect x="0" y="4" width="18" height="12" fill="#0a0a14"/>
+            <rect x="4" y="8" width="2" height="2" fill="${c2}"/>
+            <rect x="12" y="8" width="2" height="2" fill="${c2}"/>
+            <rect x="8" y="13" width="2" height="1" fill="${c2}"/>
+          </g>
+        </g>
+      </svg>`,
+    plush: (c1, c2) => `
+      <svg viewBox="0 0 64 64" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+        <!-- plush loaf cat -->
+        <!-- ears -->
+        <polygon points="16,24 20,14 26,22" fill="${c1}" stroke="#0a0a14" stroke-width="2"/>
+        <polygon points="48,24 44,14 38,22" fill="${c1}" stroke="#0a0a14" stroke-width="2"/>
+        <!-- body/loaf -->
+        <path d="M10 44 Q10 22 32 22 Q54 22 54 44 L54 54 L10 54 Z"
+              fill="${c1}" stroke="#0a0a14" stroke-width="2"/>
+        <!-- belly patch -->
+        <path d="M20 44 Q20 34 32 34 Q44 34 44 44 L44 52 L20 52 Z" fill="${c2}"/>
+        <!-- eyes -->
+        <rect x="22" y="32" width="3" height="4" fill="#0a0a14"/>
+        <rect x="39" y="32" width="3" height="4" fill="#0a0a14"/>
+        <!-- nose + mouth -->
+        <polygon points="30,38 34,38 32,40" fill="#ff2e9a"/>
+        <path d="M32 40 Q30 44 28 42 M32 40 Q34 44 36 42" fill="none" stroke="#0a0a14" stroke-width="1.5"/>
+        <!-- whiskers -->
+        <line x1="8"  y1="38" x2="20" y2="38" stroke="#0a0a14" stroke-width="1"/>
+        <line x1="44" y1="38" x2="56" y2="38" stroke="#0a0a14" stroke-width="1"/>
+      </svg>`,
+    cap: (c1, c2) => `
+      <svg viewBox="0 0 64 64" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 38 L14 22 Q32 12 50 22 L56 38 L52 42 L12 42 Z"
+              fill="${c1}" stroke="#0a0a14" stroke-width="2"/>
+        <path d="M6 38 L58 38 L58 44 L6 44 Z" fill="${c1}" stroke="#0a0a14" stroke-width="2"/>
+        <circle cx="32" cy="28" r="5" fill="${c2}" stroke="#0a0a14" stroke-width="1.5"/>
+      </svg>`,
+    mug: (c1, c2) => `
+      <svg viewBox="0 0 64 64" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+        <rect x="14" y="16" width="30" height="36" rx="2" fill="${c1}" stroke="#0a0a14" stroke-width="2"/>
+        <path d="M44 24 Q56 24 56 34 Q56 44 44 44" fill="none" stroke="#0a0a14" stroke-width="2"/>
+        <rect x="18" y="22" width="22" height="6" fill="${c2}"/>
+        <text x="29" y="41" font-family="monospace" font-size="10" fill="#0a0a14" text-anchor="middle" font-weight="bold">c4t</text>
+      </svg>`,
+  };
+  const MERCH_PALETTE = [
+    ['#ff2e9a', '#ffff4e'], // pink + yellow
+    ['#0a0a14', '#00ffd1'], // ink + cyan
+    ['#b744ff', '#ffff4e'], // mag + yellow
+    ['#f3eaff', '#ff2e9a'], // white + pink
+  ];
+  function merchSkuCode(name){
+    const clean = name.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 4).padEnd(4, 'X');
+    const n = 100 + (name.length * 37) % 899;
+    return 'LC4T-' + clean + '-' + n;
+  }
+  function merchArt(m, idx){
+    const [c1, c2] = MERCH_PALETTE[idx % MERCH_PALETTE.length];
+    const kind = m.kind || 'tee';
+    const svg = (MERCH_ART[kind] || MERCH_ART.tee)(c1, c2);
+    return `
+      <div class="merch-art">
+        <span class="mtag">${kind.toUpperCase()}</span>
+        ${svg}
+        <span class="sku">${merchSkuCode(m.name)}</span>
+      </div>
+    `;
+  }
+  document.getElementById('merch-grid').innerHTML = C.merch.map((m, idx) => {
+    if (m.placeholder){
+      return `
+      <a class="card card--soon" href="#" onclick="return false;">
+        <div class="card-img card-img--soon">
+          <div class="soon-plus">?</div>
+          <div class="soon-label">COMING<br>SOON</div>
+          <div class="soon-eta">▸ eta: whenever</div>
+        </div>
+        <div class="card-title" style="color:var(--cyan)">▸ ${m.name}</div>
+        <div class="card-cta"><span class="price">${m.price || 'tbd'}</span><span class="arrow">▸ waitlist</span></div>
+      </a>`;
+    }
+    return `
+    <a class="card" href="${m.href || '#'}" ${m.href ? 'target="_blank" rel="noopener"' : ''}>
+      <div class="card-img">${m.img ? `<img src="${m.img}" alt="${m.name}">` : merchArt(m, idx)}</div>
+      <div class="card-title">${m.name}</div>
+      <div class="card-cta"><span class="price">${m.price}</span><span class="arrow">▸ buy</span></div>
+    </a>`;
+  }).join(''); */
+
+  /* ─── SUPPORT ─── */
+  document.getElementById('support-grid').innerHTML = C.support.map(s => `
+    <a class="card" href="${s.href || '#'}" ${s.href ? 'target="_blank" rel="noopener"' : ''}>
+      <div class="card-img" style="aspect-ratio: 2/1;">${s.platform}</div>
+      <div class="card-title">${s.platform}</div>
+      <div class="card-sub">${s.note}</div>
+      <div class="card-cta"><span class="price">tip ▸</span><span class="arrow">▸▸</span></div>
+    </a>
+  `).join('');
+
+  /* ─── CONTACT ─── */
+  document.getElementById('biz-email').textContent = C.business_email;
+  document.getElementById('manager-v').textContent = C.manager;
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const el = document.getElementById(btn.dataset.copy);
+      navigator.clipboard?.writeText(el.textContent.trim());
+      const orig = btn.textContent;
+      btn.textContent = 'COPIED ✓';
+      setTimeout(() => btn.textContent = orig, 1400);
+    });
+  });
+
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  /* ─── PETTING SYSTEM v2 ─── */
+  const S = {
+    pets:   parseInt(localStorage.getItem('lc4t_pets') || '0', 10),
+    feeds:  parseInt(localStorage.getItem('lc4t_feeds') || '0', 10),
+    boops:  parseInt(localStorage.getItem('lc4t_boops') || '0', 10),
+    hunger: parseInt(localStorage.getItem('lc4t_hunger') || '100', 10), // 100=full, 0=hungry
+    chaos:  parseInt(localStorage.getItem('lc4t_chaos')  || '0', 10),
+    lastVisit: localStorage.getItem('lc4t_lastVisit') || '',
+    streak: parseInt(localStorage.getItem('lc4t_streak') || '1', 10),
+    unlocks: JSON.parse(localStorage.getItem('lc4t_unlocks') || '[]'),
+  };
+  function save(){
+    localStorage.setItem('lc4t_pets', S.pets);
+    localStorage.setItem('lc4t_feeds', S.feeds);
+    localStorage.setItem('lc4t_boops', S.boops);
+    localStorage.setItem('lc4t_hunger', S.hunger);
+    localStorage.setItem('lc4t_chaos', S.chaos);
+    localStorage.setItem('lc4t_streak', S.streak);
+    localStorage.setItem('lc4t_unlocks', JSON.stringify(S.unlocks));
+  }
+
+  // streak calc
+  (function(){
+    const today = new Date().toISOString().slice(0,10);
+    if (S.lastVisit !== today){
+      const yest = new Date(Date.now()-86400000).toISOString().slice(0,10);
+      if (S.lastVisit === yest) S.streak++;
+      else if (S.lastVisit) S.streak = 1;
+      localStorage.setItem('lc4t_lastVisit', today);
+      localStorage.setItem('lc4t_streak', S.streak);
+    }
+  })();
+
+  const LEVELS = [
+    { min: 0,   name: 'LV.1 KITTEN' },
+    { min: 15,  name: 'LV.2 TABBY'  },
+    { min: 40,  name: 'LV.3 CAT'    },
+    { min: 75,  name: 'LV.4 GHOST'  },
+    { min: 100, name: 'LV.MAX DIGITAL DEITY' },
+  ];
+  const UNLOCKS = [
+    { id: 'first',  pets: 1,   label: 'first pet',          msg: '▲ UNLOCK: "first pet" sticker' },
+    { id: 'purr',   pets: 10,  label: 'purr mode',          msg: '▲ UNLOCK: purr mode activated' },
+    { id: 'loaf',   pets: 25,  label: ':loaf: emote',       msg: '▲ UNLOCK: :loaf: emote' },
+    { id: 'blep',   pets: 50,  label: ':blep: emote',       msg: '▲ UNLOCK: :blep: emote' },
+    { id: 'chaos',  pets: 75,  label: 'chaos protocol',     msg: '▲ UNLOCK: chaos protocol' },
+    { id: 'deity',  pets: 100, label: 'digital deity form', msg: '▲ UNLOCK: digital deity form' },
+  ];
+  const REACTIONS = [
+    ':3','nya~','meow','purr','Zzz','blorp','mrrp','prrt','mew',':P','>:3','✨','♥','uwu'
+  ];
+  const PET_LINES = [
+    'soft', 'the cat approves', 'static electricity detected',
+    'she is dreaming of fish', 'frame rate: silky',
+    'she remembers you', 'motherboard warm', 'buffering affection...',
+    'CPU temp rising (good way)', 'purring at 48kHz',
+  ];
+  const FEED_LINES = [
+    'consumed.', 'packet received.', 'she ate the whole fish',
+    'tummy: loading...', 'mmm. cached memory.', 'bytes digested.',
+  ];
+  const BOOP_LINES = [
+    'BOOP ACCEPTED', 'nose: +1', 'she did not expect that',
+    'BOOP.exe has executed', 'critical boop!', 'boop chain x2',
+  ];
+
+  // DOM refs
+  const affFill = document.getElementById('aff-fill');
+  const hunFill = document.getElementById('hun-fill');
+  const chaFill = document.getElementById('cha-fill');
+  const affVal  = document.getElementById('aff-val');
+  const hunVal  = document.getElementById('hun-val');
+  const chaVal  = document.getElementById('cha-val');
+  const lvlEl   = document.getElementById('pm-level');
+  const logEl   = document.getElementById('pm-log');
+  const strEl   = document.getElementById('pm-streak');
+  const unlEl   = document.getElementById('pm-unlocks');
+
+  const petBtn   = document.getElementById('pet-btn');
+  const feedBtn  = document.getElementById('feed-btn');
+  const boopBtn  = document.getElementById('boop-btn');
+  const resetBtn = document.getElementById('pm-reset');
+  const catFrame = document.getElementById('cat-frame');
+
+  function hungerLabel(){
+    if (S.hunger >= 80) return 'full';
+    if (S.hunger >= 50) return 'peckish';
+    if (S.hunger >= 25) return 'hungry';
+    if (S.hunger > 0)   return 'STARVING';
+    return 'CRITICAL';
+  }
+  function log(txt, cls){
+    const line = document.createElement('div');
+    line.className = 'pm-log-line' + (cls ? ' ' + cls : '');
+    line.textContent = '> ' + txt;
+    logEl.appendChild(line);
+    while (logEl.children.length > 24) logEl.removeChild(logEl.firstChild);
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+  function render(){
+    const affPct = Math.min(Math.round(S.pets), 100);
+    affFill.style.width = affPct + '%';
+    affVal.textContent = Math.round(S.pets) + ' / 100';
+
+    const hunR = Math.round(S.hunger);
+    hunFill.style.width = hunR + '%';
+    hunVal.textContent = hungerLabel();
+
+    const chaR = Math.min(Math.round(S.chaos), 100);
+    chaFill.style.width = chaR + '%';
+    chaVal.textContent = chaR + '%';
+
+    const lv = LEVELS.filter(l => S.pets >= l.min).pop();
+    lvlEl.textContent = lv.name;
+
+    strEl.textContent = '🔥 streak: day ' + S.streak;
+    unlEl.textContent = '🎖 ' + S.unlocks.length + ' / ' + UNLOCKS.length + ' unlocked';
+  }
+  function checkUnlocks(){
+    UNLOCKS.forEach(u => {
+      if (S.pets >= u.pets && !S.unlocks.includes(u.id)){
+        S.unlocks.push(u.id);
+        log(u.msg, 'pink');
+        floatText('🎖 ' + u.label, catFrame, 'var(--yellow)');
+      }
+    });
+  }
+
+  function floatText(text, anchor, color){
+    const r = anchor.getBoundingClientRect();
+    const zzz = document.createElement('div');
+    zzz.className = 'zzz';
+    zzz.textContent = text;
+    zzz.style.color = color || 'var(--cyan)';
+    zzz.style.left = (r.left + r.width/2 + (Math.random()*40-20)) + 'px';
+    zzz.style.top  = (r.top + r.height/2 + (Math.random()*20-10)) + 'px';
+    zzz.style.setProperty('--dx', (Math.random()*80-40) + 'px');
+    zzz.style.setProperty('--rot', (Math.random()*30-15) + 'deg');
+    document.body.appendChild(zzz);
+    setTimeout(()=>zzz.remove(), 1300);
+  }
+
+  function shake(){
+    catFrame.animate(
+      [{transform:'translate(0,0)'},{transform:'translate(-2px,1px)'},{transform:'translate(2px,-1px)'},{transform:'translate(0,0)'}],
+      {duration:180, easing:'steps(3)'}
+    );
+  }
+
+  function doPet(e){
+    S.pets++;
+    S.hunger = Math.max(0, S.hunger - 1);
+    S.chaos = Math.min(100, S.chaos + 1);
+    const txt = (Math.random() < 0.35) ? REACTIONS[Math.floor(Math.random()*REACTIONS.length)] : '+1';
+    floatText(txt, e && e.target === catFrame ? catFrame : petBtn,
+      ['var(--pink)','var(--cyan)','var(--yellow)'][Math.floor(Math.random()*3)]);
+    if (S.pets % 3 === 0) log(PET_LINES[Math.floor(Math.random()*PET_LINES.length)]);
+    checkUnlocks();
+    shake();
+    save(); render();
+    if (S.pets === 100) maxedOut();
+  }
+  function doFeed(){
+    if (S.hunger >= 100){ log('she is not hungry. try again later.'); return; }
+    S.feeds++;
+    S.hunger = Math.min(100, S.hunger + 25);
+    S.chaos = Math.min(100, S.chaos + 2);
+    floatText('🐟 nom', feedBtn, 'var(--cyan)');
+    log(FEED_LINES[Math.floor(Math.random()*FEED_LINES.length)]);
+    shake();
+    save(); render();
+  }
+  function doBoop(){
+    S.boops++;
+    S.chaos = Math.min(100, S.chaos + 5);
+    floatText('👉 boop', boopBtn, 'var(--yellow)');
+    log(BOOP_LINES[Math.floor(Math.random()*BOOP_LINES.length)]);
+    shake();
+    save(); render();
+  }
+  function maxedOut(){
+    log('╳╳╳ MAX AFFECTION REACHED ╳╳╳', 'pink');
+    log('you are officially family now.', 'pink');
+    document.body.animate(
+      [{filter:'hue-rotate(0deg)'},{filter:'hue-rotate(360deg)'}],
+      {duration:800, iterations:2}
+    );
+  }
+
+  petBtn.addEventListener('click', doPet);
+  feedBtn.addEventListener('click', doFeed);
+  boopBtn.addEventListener('click', doBoop);
+  catFrame.addEventListener('click', doPet);
+  resetBtn.addEventListener('click', ()=>{
+    if (!confirm('reset all cat progress?')) return;
+    ['pets','feeds','boops','hunger','chaos','unlocks','streak'].forEach(k => localStorage.removeItem('lc4t_'+k));
+    Object.assign(S,{pets:0,feeds:0,boops:0,hunger:100,chaos:0,streak:1,unlocks:[]});
+    logEl.innerHTML = '<div class="pm-log-line">&gt; system reset. cat rebooted.</div>';
+    save(); render();
+  });
+
+  // keyboard shortcuts
+  document.addEventListener('keydown', (e)=>{
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'p' || e.key === 'P') doPet(e);
+    else if (e.key === 'f' || e.key === 'F') doFeed();
+    else if (e.key === 'b' || e.key === 'B') doBoop();
+  });
+
+  // passive hunger decay
+  setInterval(()=>{
+    if (S.hunger > 0) { S.hunger = Math.max(0, S.hunger - 1); save(); render(); }
+  }, 8000);
+
+  // passive chaos decay
+  setInterval(()=>{
+    if (S.chaos > 0) { S.chaos = Math.max(0, S.chaos - 1); save(); render(); }
+  }, 5000);
+
+  render();
+  if (S.pets === 0) log('tip: hold P to pet rapidly. F for fish. B for boop.');
+
+  /* ─── UPTIME COUNTER ─── */
+  const uptimeEl = document.getElementById('qf-uptime');
+  const bootEpoch = new Date('2023-01-01T00:00:00Z').getTime();
+  function tickUptime(){
+    const t = Date.now() - bootEpoch;
+    const d = Math.floor(t/86400000);
+    const h = Math.floor((t%86400000)/3600000);
+    const m = Math.floor((t%3600000)/60000);
+    const s = Math.floor((t%60000)/1000);
+    uptimeEl.textContent = d + 'd ' + String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  }
+  tickUptime(); setInterval(tickUptime, 1000);
+
+  /* ─── BADGES (blinkie-style, non-shareable) ─── */
+  const BADGES = [
+    { text: 'digital ghost',        theme: 'bl-black' },
+    { text: 'vtuber',               theme: 'bl-hotpink' },
+    { text: 'trapped in the wifi',  theme: 'bl-cyan' },
+    { text: '3am gamer',            theme: 'bl-mag' },
+    { text: 'vrchat veteran',       theme: 'bl-lime' },
+    { text: 'cat ★',                theme: 'bl-yellow' },
+    { text: 'indie game sicko',     theme: 'bl-orange' },
+    { text: 'certified loaf',       theme: 'bl-white' },
+    { text: 'adhd haver',           theme: 'bl-hotpink' },
+    { text: 'balatro brained',      theme: 'bl-cyan' },
+    { text: 'twitch affiliate',     theme: 'bl-mag' },
+    { text: 'react andy',           theme: 'bl-lime' },
+  ];
+  function escapeHTML(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  const blGrid = document.getElementById('bl-grid');
+  blGrid.innerHTML = BADGES.map(b => `
+    <div class="blinkie ${b.theme}">
+      <span class="dot"></span>
+      <span>${escapeHTML(b.text)}</span>
+    </div>
+  `).join('');
+
+  /* ─── CURSOR TRAIL (subtle) ─── */
+  let lastTrail = 0;
+  document.addEventListener('mousemove', (e)=>{
+    const now = Date.now();
+    if (now - lastTrail < 40) return;
+    lastTrail = now;
+    const t = document.createElement('div');
+    t.className = 'trail';
+    t.style.left = (e.clientX-3)+'px';
+    t.style.top  = (e.clientY-3)+'px';
+    t.style.background = ['#00ffd1','#ff2e9a','#ffff4e'][Math.floor(Math.random()*3)];
+    document.body.appendChild(t);
+    requestAnimationFrame(()=>{ t.style.opacity = 0; });
+    setTimeout(()=>t.remove(), 600);
+  });
+
+  /* ─── IDLE DECAY ─── */
+  (function(){
+    const STAGE_MS = 60 * 1000; // each stage = 1 minute idle
+    const MAX_STAGE = 5;
+    const hud     = document.getElementById('idle-hud');
+    const hudTxt  = document.getElementById('idle-hud-txt');
+    const restore = document.getElementById('idle-restored');
+    let lastActive = Date.now();
+    let stage = 0;
+    let tearTimer = null;
+
+    const LABELS = [
+      '',
+      'TRACKING ERROR',
+      'CONNECTION UNSTABLE',
+      'SIGNAL DEGRADING',
+      'CORRUPTED',
+      'SYSTEM FAILURE',
+    ];
+
+    function setStage(newStage){
+      if (newStage === stage) return;
+      const wasHigh = stage > 0;
+      stage = newStage;
+      for (let i = 1; i <= MAX_STAGE; i++){
+        document.body.classList.toggle('idle-s' + i, i <= stage);
+      }
+      if (stage >= 3){
+        if (!tearTimer) tearTimer = setInterval(randomTear, 1800);
+      } else {
+        if (tearTimer){ clearInterval(tearTimer); tearTimer = null; }
+      }
+      if (stage === 0 && wasHigh){
+        restore.classList.remove('show');
+        void restore.offsetWidth;
+        restore.classList.add('show');
+      }
+    }
+
+    function randomTear(){
+      // brief screen tear: offset a slice of main horizontally
+      const main = document.querySelector('main');
+      if (!main) return;
+      const yPct = 10 + Math.random() * 80;
+      const h = 6 + Math.random() * 40;
+      const offset = (Math.random() < .5 ? -1 : 1) * (6 + Math.random() * 20);
+      const tear = document.createElement('div');
+      Object.assign(tear.style, {
+        position: 'fixed',
+        left: '0', right: '0',
+        top: yPct + 'vh',
+        height: h + 'px',
+        background: 'rgba(0,255,209,.08)',
+        borderTop:    '1px solid rgba(255,46,154,.5)',
+        borderBottom: '1px solid rgba(0,255,209,.5)',
+        zIndex: 180,
+        pointerEvents: 'none',
+        transform: 'translateX(' + offset + 'px)',
+        mixBlendMode: 'screen',
+      });
+      document.body.appendChild(tear);
+      setTimeout(()=> tear.remove(), 120 + Math.random() * 160);
+    }
+
+    function fmt(s){
+      const m = Math.floor(s / 60);
+      const r = s % 60;
+      return String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0');
+    }
+
+    function tick(){
+      const idleSec = Math.floor((Date.now() - lastActive) / 1000);
+      const newStage = Math.min(MAX_STAGE, Math.floor((idleSec * 1000) / STAGE_MS));
+      if (newStage !== stage) setStage(newStage);
+      if (stage > 0){
+        hudTxt.textContent = '⚠ IDLE ' + fmt(idleSec) + ' — ' + LABELS[stage];
+      }
+    }
+
+    function reset(){
+      lastActive = Date.now();
+      if (stage > 0) setStage(0);
+    }
+
+    ['mousemove','mousedown','keydown','scroll','touchstart','wheel'].forEach(ev=>{
+      window.addEventListener(ev, reset, { passive: true });
+    });
+
+    setInterval(tick, 1000);
+  })();
+
+  /* ─── FAKE VISITOR COUNTER (saves per browser) ─── */
+  const base = 42069;
+  const n = parseInt(localStorage.getItem('lazyc4t_visits') || '0', 10) + 1;
+  localStorage.setItem('lazyc4t_visits', n);
+  document.getElementById('visit-count').textContent = String(base + n).padStart(8,'0');
+</script>
+
+</body>
+</html>
