@@ -1514,7 +1514,7 @@ window.LAZY_C4T_CONFIG = {
 
   <!-- ════ SUPPORT ════ -->
   <section>
-    <div class="label">▸ tip jar // she needs it</div>
+    <div class="label">▸ tip jar // he needs it</div>
     <h2 class="h-term">feed the ghost ▸</h2>
     <div class="grid-4" id="support-grid"><!-- injected --></div>
   </section>
@@ -1853,16 +1853,16 @@ window.LAZY_C4T_CONFIG = {
   ];
   const PET_LINES = [
     'soft', 'the cat approves', 'static electricity detected',
-    'she is dreaming of fish', 'frame rate: silky',
-    'she remembers you', 'motherboard warm', 'buffering affection...',
+    'he is dreaming of fish', 'frame rate: silky',
+    'he remembers you', 'motherboard warm', 'buffering affection...',
     'CPU temp rising (good way)', 'purring at 48kHz',
   ];
   const FEED_LINES = [
-    'consumed.', 'packet received.', 'she ate the whole fish',
+    'consumed.', 'packet received.', 'he ate the whole fish',
     'tummy: loading...', 'mmm. cached memory.', 'bytes digested.',
   ];
   const BOOP_LINES = [
-    'BOOP ACCEPTED', 'nose: +1', 'she did not expect that',
+    'BOOP ACCEPTED', 'nose: +1', 'he did not expect that',
     'BOOP.exe has executed', 'critical boop!', 'boop chain x2',
   ];
 
@@ -1963,7 +1963,7 @@ window.LAZY_C4T_CONFIG = {
     if (S.pets === 100) maxedOut();
   }
   function doFeed(){
-    if (S.hunger >= 100){ log('she is not hungry. try again later.'); return; }
+    if (S.hunger >= 100){ log('he is not hungry. try again later.'); return; }
     S.feeds++;
     S.hunger = Math.min(100, S.hunger + 25);
     S.chaos = Math.min(100, S.chaos + 2);
